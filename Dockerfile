@@ -1,4 +1,4 @@
-FROM openshift/base-centos7
+FROM registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift
 ARG MULE_VERSION
 
 ENV MULE_HOME /opt/mule
@@ -11,11 +11,8 @@ LABEL io.k8s.description="Base Image for Mule ESB" \
 
 # we need some tools from yum
 # and install mule ee standalone
-
-RUN yum update -y \
-    && yum install -y java-1.8.0-openjdk-devel maven zip \
-    && yum clean all -y \
-    && curl -o /opt/mule.tar.gz https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/${MULE_VERSION}/mule-standalone-${MULE_VERSION}.tar.gz \
+USER root
+RUN curl -o /opt/mule.tar.gz https://repository-master.mulesoft.org/nexus/content/repositories/releases/org/mule/distributions/mule-standalone/${MULE_VERSION}/mule-standalone-${MULE_VERSION}.tar.gz \
     && tar -xzf /opt/mule.tar.gz -C /opt \
     && mv /opt/mule-standalone-${MULE_VERSION} $MULE_HOME \
     && rm /opt/mule.tar.gz*
